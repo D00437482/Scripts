@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Ask the user for an IP address
+echo "Enter the IP address of the remote host:"
+read ip
+
+# Present a menu of options to the user
+echo "Select an option:"
+echo "1. Print a welcome message"
+echo "2. Get process status on remote host"
+echo "3. Get disk percentage used on root filesystem"
+echo "4. Get hostname of remote machine"
+read option
+
+# Use if/else structure to handle user's selection
+if [ "$option" -eq 1 ]; then
+  # Print a welcome message
+  echo "Welcome to the remote host at $ip!"
+
+elif [ "$option" -eq 2 ]; then
+  # Get process status on remote host
+  echo "Enter the service name to check:"
+  read service
+  ssh $ip "service $service status" | grep -oP 'Active:\s*\K\w+'
+
+elif [ "$option" -eq 3 ]; then
+  # Get disk percentage used on root filesystem
+  ssh $ip "df / | tail -1" | awk '{print $5}' | sed 's/%//'
+
+elif [ "$option" -eq 4 ]; then
+  # Get hostname of remote machine
+  ssh $ip "hostname"
+
+else
+  # Print an error message for invalid options
+  echo "Invalid option. Please select a number between 1 and 4."
+fi
